@@ -21,3 +21,52 @@ You need to implement a program that compresses a given input string losslessly 
 
 1. Support Unicode characters. I.e. input string can contain any Unicode characters.
 2. Implement a different lossless compression algorithm (e.g., Huffman coding).
+                                           
+public class StringCompression {
+
+    public static String compress(String s) {
+        if (s == null || s.isEmpty()) return "";
+
+        StringBuilder compressed = new StringBuilder();
+        int count = 1;
+
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == s.charAt(i - 1)) {
+                count++;
+            } else {
+                compressed.append(s.charAt(i - 1)).append(count);
+                count = 1;
+            }
+        }
+        compressed.append(s.charAt(s.length() - 1)).append(count);
+
+        return compressed.toString();
+    }
+
+    // Decompress function to restore original string
+    public static String decompress(String s) {
+        if (s == null || s.isEmpty()) return "";
+        StringBuilder decompressed = new StringBuilder();
+        int i = 0;
+        while (i < s.length()) {
+            char character = s.charAt(i++);
+            int count = 0;
+            while (i < s.length() && Character.isDigit(s.charAt(i))) {
+                count = count * 10 + (s.charAt(i) - '0');
+                i++;
+            }
+            decompressed.append(String.valueOf(character).repeat(count));
+        }
+        return decompressed.toString();
+    }
+
+    public static void main(String[] args) {
+        String original = "aaabbbcccddeeeffff";
+        String compressed = compress(original);
+        String decompressed = decompress(compressed);
+        System.out.println("Original: " + original);
+        System.out.println("Compressed: " + compressed);
+        System.out.println("Decompressed: " + decompressed);
+        System.out.println("Lossless: " + original.equals(decompressed));
+    }
+}
